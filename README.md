@@ -1,74 +1,87 @@
-# calculator.html #
-```html
+# calculator.
+```HTML
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Калькулятор | Авто-Люкс</title>
+  <meta charset="UTF-8">
+  <title>ПР7 — Вариант 2</title>
   <style>
-    body { background: #0a0a0a; color: white; font-family: Arial; padding: 20px; }
-    header { background: #c00; padding: 15px; text-align: center; }
-    nav { padding: 15px; background: #222; }
-    nav a { color: white; margin: 0 12px; text-decoration: none; }
-    .calc { max-width: 500px; margin: 30px auto; background: #1a1a1a; padding: 25px; border-radius: 8px; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input { width: 100%; padding: 8px; margin-top: 5px; background: #333; color: white; border: 1px solid #555; }
-    button { margin-top: 20px; padding: 10px 20px; background: #c00; color: white; border: none; width: 100%; font-size: 16px; cursor: pointer; }
-    #result { margin-top: 20px; padding: 15px; background: #2a2a2a; border-radius: 6px; text-align: center; font-size: 18px; }
-    footer { text-align: center; margin-top: 40px; color: #888; }
+    body { font-family: Arial; padding: 20px; }
+    input, button { margin: 8px 0; padding: 6px; }
+    #result { margin-top: 15px; font-weight: bold; color: #2c5; }
   </style>
 </head>
 <body>
-  <header><h2>Кредитный калькулятор</h2></header>
+  <h2>Сумма между первым и последним нулём</h2>
 
-  <nav>
-    <a href="index.html">Главная</a>
-    <a href="cars.html">Каталог</a>
-    <a href="order.html">Оформить заказ</a>
-    <a href="calculator.html">Калькулятор</a>
-  </nav>
-
-  <div class="calc">
-    <label>Стоимость авто (руб):</label>
-    <input type="number" id="price" value="5000000">
-
-    <label>Первоначальный взнос (%):</label>
-    <input type="number" id="down" value="20" min="0" max="100">
-
-    <label>Срок кредита (месяцы):</label>
-    <input type="number" id="term" value="36" min="1">
-
-    <button onclick="calculate()">Рассчитать</button>
-    <div id="result">Результат появится здесь</div>
+  <!-- Способ 1: ввод через поле -->
+  <div>
+    <label>Введите массив (через запятую):</label><br>
+    <input type="text" id="input-field" placeholder="1,0,3,4,0,5">
+    <button onclick="handleFieldInput()">Посчитать</button>
   </div>
 
-  <footer>&copy; 2025 Авто-Люкс</footer>
+  <!-- Способ 2: ввод через prompt -->
+  <div>
+    <button id="prompt-btn">Ввести через всплывающее окно</button>
+  </div>
 
-  <script src="calc.js"></script>
+  <!-- Место вывода результата -->
+  <div id="result"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
 ```
 # script.js #
 ```js
-function calculate() {
-  let price = Number(document.getElementById("price").value);
-  let downPercent = Number(document.getElementById("down").value);
-  let term = Number(document.getElementById("term").value);
+// Обработчик для ввода через текстовое поле (использует onclick в HTML)
+function handleFieldInput() {
+  const input = document.getElementById('input-field').value.trim();
+  processInput(input);
+}
 
-  if (price <= 0 || term <= 0 || downPercent < 0 || downPercent > 100) {
-    document.getElementById("result").innerText = "Ошибка: проверьте данные";
+// Обработчик для ввода через prompt (привязан через addEventListener)
+document.getElementById('prompt-btn').addEventListener('click', function () {
+  const input = prompt('Введите массив через запятую (например: 1,0,2,3,0,4)');
+  if (input !== null) processInput(input.trim());
+});
+
+// Основная логика обработки
+function processInput(str) {
+  if (!str) {
+    showResult('Ошибка: пустой ввод.');
     return;
   }
 
-  let downPayment = price * (downPercent / 100);
-  let loanAmount = price - downPayment;
-  let monthly = loanAmount / term;
+  const arr = str.split(',').map(item => {
+    const num = parseFloat(item.trim());
+    return isNaN(num) ? NaN : num;
+  });
 
-  let msg = "Первоначальный взнос: " + Math.round(downPayment).toLocaleString() + " ₽\n" +
-            "Ежемесячный платёж: " + Math.round(monthly).toLocaleString() + " ₽\n" +
-            "Сумма кредита: " + Math.round(loanAmount).toLocaleString() + " ₽";
+  if (arr.some(isNaN)) {
+    showResult('Ошибка: введены некорректные данные.');
+    return;
+  }
 
-  document.getElementById("result").innerText = msg;
+  const firstZero = arr.indexOf(0);
+  const lastZero = arr.lastIndexOf(0);
+
+  if (firstZero === -1 || lastZero === -1 || firstZero === lastZero) {
+    showResult('Недостаточно нулей в массиве (нужно хотя бы два).');
+    return;
+  }
+
+  let sum = 0;
+  for (let i = firstZero + 1; i < lastZero; i++) {
+    sum += arr[i];
+  }
+
+  showResult(`Сумма элементов между первым и последним нулём: ${sum}`);
+}
+
+// Вывод результата на страницу
+function showResult(text) {
+  document.getElementById('result').textContent = text;
 }
 ```
