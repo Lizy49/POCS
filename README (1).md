@@ -1,16 +1,17 @@
-# Практическая работа №8 #
+# Практическая работа №9 #
 
-### Тема: ПР 8. Применение списков ###
+### Тема: ПР 9. Применение классов ###
 
-### Цель: совершенствование навыков составления  программ  на основе списков ###
+### Цель: совершенствование навыков составления  программ  на основе классов ###
 
 #### Ход работы ####
 
 ##### Задача: #####
 
-> повторить структуру алгоритмов решения строковых задач;  
-> повторить синтаксис операторов описания списка;  
-> приобрести навыки составления программ на основе строковой информации.  
+> повторить структуру алгоритмов решения задач с классами;  
+> повторить синтаксис операторов описания класса;  
+> приобрести навыки составления программ на основе ООП  
+
 
 
 
@@ -32,32 +33,62 @@
 
 ##### Код программы для консоли: #####
 ```python
-def binary_search(sorted_list, target):
-    low = 0
-    high = len(sorted_list) - 1
-    
-    while low <= high:
-        mid = (low + high) // 2
-        guess = sorted_list[mid]
+class Matrix:
+    def __init__(self, rows, cols, default_value=0):
+        self.rows = rows
+        self.cols = cols
         
-        if guess == target:
-            return mid
-        if guess > target:
-            high = mid - 1
+        self.data = [[default_value for _ in range(cols)] for _ in range(rows)]
+
+    def set_element(self, row, col, value):
+        if 0 <= row < self.rows and 0 <= col < self.cols:
+            self.data[row][col] = value
         else:
-            low = mid + 1
-            
-    return None
+            print("Ошибка: индекс выходит за пределы матрицы")
+
+    def get_submatrix(self, start_row, end_row, start_col, end_col):
+
+        sub = []
+        for i in range(start_row, end_row + 1):
+            row_data = []
+            for j in range(start_col, end_col + 1):
+                if 0 <= i < self.rows and 0 <= j < self.cols:
+                    row_data.append(self.data[i][j])
+            if row_data:
+                sub.append(row_data)
+        return sub
+
+    def resize(self, new_rows, new_cols):
+
+        new_data = [[0 for _ in range(new_cols)] for _ in range(new_rows)]
+        for i in range(min(self.rows, new_rows)):
+            for j in range(min(self.cols, new_cols)):
+                new_data[i][j] = self.data[i][j]
+        self.rows = new_rows
+        self.cols = new_cols
+        self.data = new_data
+
+    def print_matrix(self):
+        for row in self.data:
+            print(row)
 
 
-my_list = [1, 3, 5, 7, 9, 11, 13, 15]
-target = 7
-result = binary_search(my_list, target)
+m = Matrix(3, 3)
+m.set_element(0, 0, 1)
+m.set_element(1, 1, 5)
+m.set_element(2, 2, 9)
 
-if result is not None:
-    print(f"Элемент {target} найден под индексом {result}")
-else:
-    print(f"Элемент {target} не найден")
+print("Исходная матрица:")
+m.print_matrix()
+
+print("\nПодматрица (с 0 по 1 строку, с 0 по 1 столбец):")
+sub = m.get_submatrix(0, 1, 0, 1)
+for row in sub:
+    print(row)
+
+print("\nИзменение размера на 4x4:")
+m.resize(4, 4)
+m.print_matrix()
 ```
 
 ##### Код программы для окна: #####
