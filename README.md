@@ -4,33 +4,99 @@
 
 #### Ход работы ####
 
-##### Вариант: 15 #####
+##### Вариант: 11 #####
 ##### Код программы: #####
-````C#
+```cs
+        namespace WinFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            textBox1.Clear();
-            //данные с условия
-            double x0 = 1.75, xk = -2.5, dx = -0.25;
-            double b = 35.4;
-            //цикл перебирает значения х от х0 до хк с шагом дх
-            for (double x = x0; x >= xk; x += dx)
-            {// проверка области определения логарифма. лн(х + в) существ только если (х + в) > 0
-                if (x + b > 0)
-                {//вычисление формулы
-                    double y = Math.Pow(10,-3) * Math.Pow(Math.Abs(x), 2.5) + Math.Log(Math.Abs(x + b));
-                    //вывод рещультата
-                    textBox1.AppendText($"x = {x:F2} y = {y:F4}\r\n");
+            try
+            {
+               
+                double x0 = Convert.ToDouble(textBox1.Text);
+                double xk = Convert.ToDouble(textBox2.Text);
+                double dx = Convert.ToDouble(textBox3.Text);
+                double a = Convert.ToDouble(textBox4.Text);
+                double b = Convert.ToDouble(textBox5.Text); 
+
+                
+                listBox1.Items.Clear();
+
+                
+                listBox1.Items.Add("Результаты табулирования:");
+                listBox1.Items.Add("-----------------------------");
+                listBox1.Items.Add($"| {"X",10} | {"Y",15} |");
+                listBox1.Items.Add("-----------------------------");
+
+
+
+                double x = x0;
+
+
+                double epsilon = Math.Abs(dx) / 1000.0; 
+                if (dx > 0)
+                {
+                    while (x <= xk + epsilon)
+                    {
+                        
+                        double y = 2 * x + a - b * Math.Exp(x);
+
+                        string line = $"| {x,10:F4} | {y,15:F6} |";
+                        listBox1.Items.Add(line);
+
+                        x += dx;
+                    }
+                }
+                else if (dx < 0)
+                {
+                    while (x >= xk - epsilon)
+                    {
+                        
+                        double y = 2 * x + a - b * Math.Exp(x);
+
+                        
+                        string line = $"| {x,10:F4} | {y,15:F6} |";
+                        listBox1.Items.Add(line);
+
+                        x += dx; 
+                    }
                 }
                 else
-                {//если логарифм нельзя вычислить, то вывод слова undefined
-                    textBox1.AppendText($"x = {x:F2} y = undefined\r\n");
+                {
+                    MessageBox.Show("Шаг dx не может быть равен нулю!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
+
+                listBox1.Items.Add("-----------------------------");
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Пожалуйста, введите корректные числовые значения во все поля.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-````
+    }
+}
+
+```
 
 Скриншоты:  
-![Alt text](1.png)  
+![alt text](1.png)
 ##### Вывод по проделанной работе: #####
 > изучил простейшие средства отладки программ в среде Visual Studio. Составил и отладил программу циклического алгоритма.
